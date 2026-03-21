@@ -1,206 +1,481 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>우리 결혼해요 💕</title>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #237ec0;
-      --secondary: #adcceb;
-      --bg-light: #f5f7fa;
-      --bg-card: #fff;
-      --text-dark: #333;
-      --shadow: 0 0px 0px rgba(0,0,0,0.1);
-    }
-    body {
-      margin: 0;
-      font-family: 'Noto Sans KR', sans-serif;
-      background: var(--bg-light);
-      color: var(--text-dark);
-      line-height: 1.6;
-    }
-    header {
-      text-align: center;
-      background: var(--secondary);
-      color: #fff;
-      padding: 2rem 1rem;
-    }
-    header h1 { margin: 0; font-size: 2rem; }
-    .main-photo {
-      width: 90%; max-width: 320px; aspect-ratio: 3/5;
-      margin: 1rem auto 0; border-radius: 12px; overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    .main-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    section {
-      max-width: 800px; margin: 2rem auto; padding: 1.5rem;
-      background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow);
-    }
-    h2 { text-align: center; margin-bottom: 1rem; color: var(--primary); }
-    p { margin: 0.3rem 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이음카페</title>
 
-    /* 갤러리 */
-    .gallery { overflow: hidden; border-radius: 12px; }
-    .slide-track {
-      display: flex; width: calc(300px * 10);
-      animation: scroll 30s linear infinite;
-    }
-    .slide { flex: 0 0 300px; margin: 0 5px; }
-    .slide img { width: 100%; border-radius: 8px; display: block; }
-    @keyframes scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
+<!-- ✅ PWA (외부파일 없이 inline 처리) -->
+<meta name="theme-color" content="#6b4f4f">
 
-    /* 지도 */
-    .map { text-align: center; }
-    .map-container { max-width: 800px; margin: 1rem auto; }
-    .map-container img { width: 100%; border-radius: 8px; display: block; }
+<!-- 아이콘 (임시 base64 or 추후 교체 가능) -->
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA">
 
-    /* 버튼 */
-    .btn {
-      display: inline-block; padding: 0.8em 1.5em; margin: 6px;
-      border-radius: 25px; border: 1px solid var(--primary);
-      background: #fff; color: var(--primary);
-      font-size: clamp(13px, 2.5vw, 16px);
-      text-decoration: none; transition: 0.3s;
-      white-space: nowrap; cursor: pointer;
-    }
-    .btn:hover { background: var(--primary); color: #fff; }
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f7f3f0;
+  padding: 10px;
+  margin: 0;
+}
 
-    /* 연락처 & 계좌 */
-    .contact-container, .account-container {
-      display: flex; justify-content: center; gap: 15px;
-      flex-wrap: wrap; text-align: center;
-    }
-    .contact-box, .account-box {
-      flex: 1 1 280px; background: #f9fcff; padding: 1rem;
-      border-radius: 12px; box-shadow: var(--shadow);
-    }
-    .contact-box h3, .account-box h3 { margin-bottom: 10px; color: var(--primary); }
+.menu { max-width: 100%; margin: auto; }
 
-    footer { text-align: center; padding: 1rem; font-size: 0.7rem; color: #666; }
-  </style>
+.category {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 25px 0 10px;
+  color: #6b4f4f;
+}
+
+.menu-title {
+  font-size: 1.1rem;
+  padding: 12px 5px;
+  color: #333;
+}
+
+.accordion {
+  background: #fff;
+  cursor: pointer;
+  padding: 14px;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #eee;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon { font-size: 1.4rem; }
+
+.panel {
+  max-height: 0;
+  overflow: hidden;
+  background: #fff;
+  transition: max-height 0.3s ease;
+}
+
+.recipe-row {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  font-size: 0.95rem;
+  border-top: 1px solid #eee;
+}
+
+.recipe-title {
+  min-width: 60px;
+  font-weight: bold;
+}
+
+.recipe-text { color: #555; }
+
+.accordion.active { background: #f0ebe8; }
+
+@media (max-width: 480px) {
+  .category { font-size: 1.5rem; }
+  .menu-title { font-size: 1.2rem; }
+  .accordion { font-size: 1.1rem; padding: 16px; }
+  .recipe-row { font-size: 1rem; }
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <h1>우리💕 결혼해요</h1>
-    <div class="main-photo">
-      <img src="https://i.ifh.cc/l6ycKg.png" alt="결혼 메인 사진">
+
+<div class="menu">
+
+ <!-- 🔥 핫 -->
+ <div class="category">🔥 핫 / ❄️ 아이스</div>
+
+  <div class="menu-title">아메리카노</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">뜨거운물 200ml + 샷1</div>
     </div>
-  </header>
-
-  <!-- 모시는 글 -->
-  <section>
-    <h2>모시는 글</h2>
-    <p align="center">오늘이 있기까지 많은 사랑과 관심을 주신 친지분들을 모시고,</p>
-    <p align="center">한 쌍의 젊음이 아름다운 백년해로의 가약을 맺고자 합니다.</p>
-    <p align="center">귀한 발걸음으로 저희 두 사람의 앞날을 축복해 주시기 바랍니다.</p>
-    <br>
-    <p align="center">장아빠 · 이엄마의 <strong>아들 세모</strong></p>
-    <p align="center">황아빠 · 이엄마의 <strong>딸 네모</strong></p>
-    <br>
-    <p align="center"><strong>2025년 3월 17일 (토) 11:00</strong></p>
-    <p align="center">빌라드지디 안산 5층 그랜드컨벤션홀</p>
-  </section>
-
-  <!-- 갤러리 -->
-  <section>
-    <h2>Gallery</h2>
-    <div class="gallery">
-      <div class="slide-track">
-        <div class="slide"><img src="https://i.ifh.cc/WmsTAo.jpg" alt="사진1"></div>
-        <div class="slide"><img src="https://i.ifh.cc/DG4JVD.jpg" alt="사진2"></div>
-        <div class="slide"><img src="https://i.ifh.cc/5Lzst5.jpg" alt="사진3"></div>
-        <div class="slide"><img src="https://i.ifh.cc/Hg2WQz.jpg" alt="사진4"></div>
-        <div class="slide"><img src="https://i.ifh.cc/0qM3G2.jpg" alt="사진5"></div>
-        <!-- 반복 -->
-        <div class="slide"><img src="https://i.ifh.cc/WmsTAo.jpg" alt="사진1"></div>
-        <div class="slide"><img src="https://i.ifh.cc/DG4JVD.jpg" alt="사진2"></div>
-        <div class="slide"><img src="https://i.ifh.cc/5Lzst5.jpg" alt="사진3"></div>
-        <div class="slide"><img src="https://i.ifh.cc/Hg2WQz.jpg" alt="사진4"></div>
-        <div class="slide"><img src="https://i.ifh.cc/0qM3G2.jpg" alt="사진5"></div>
-      </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">얼음가득 + 찬물200ml + 샷2</div>
     </div>
-  </section>
+  </div>
 
-  <!-- 장소 안내 -->
-  <section>
-    <h2>장소 안내</h2>
-    <p align="center"><strong>빌라드지디 안산 GD팰리스타워 5층 그랜드컨벤션홀</strong></p>
-    <p align="center">경기 안산시 단원구 광덕4로 140 (고잔동 703)</p>
-    <p align="center"><strong>TEL:</strong> 031-487-8100</p>
-    <div class="map">
-      <div class="map-container">
-        <a href="https://map.kakao.com/?urlX=461862&urlY=1059890&urlLevel=3" target="_blank">
-          <img src="https://map2.daum.net/map/mapservice?FORMAT=PNG&SCALE=2.5&MX=461862&MY=1059890&S=0&IW=504&IH=310&LANG=0&COORDSTM=WCONGNAMUL&logo=kakao_logo" alt="카카오맵 위치 이미지">
-        </a>
-      </div>
+  <div class="menu-title">카페라떼</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">샷2 + 우유 200ml 스팀</div>
     </div>
-  </section>
-
-  <!-- 연락처 -->
-  <section>
-    <h2>연락처</h2>
-    <div class="contact-container">
-      <div class="contact-box">
-        <h3>신랑측</h3>
-        <a href="tel:01000000000" class="btn">📞 신랑</a>
-        <a href="tel:01000000000" class="btn">📞 아버지</a>
-        <a href="tel:01000000000" class="btn">📞 어머니</a>
-      </div>
-      <div class="contact-box">
-        <h3>신부측</h3>
-        <a href="tel:01000000000" class="btn">📞 신부</a>
-        <a href="tel:01000000000" class="btn">📞 아버지</a>
-        <a href="tel:01000000000" class="btn">📞 어머니</a>
-      </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">얼음가득 + 우유150ml + 샷2</div>
     </div>
-  </section>
+  </div>
 
-  <!-- 마음 나누실 곳 -->
-  <section>
-    <h2>마음 나누실 곳</h2>
-    <div class="account-container">
-      <div class="account-box">
-        <h3>신랑측</h3>
-        <button onclick="copyAccount('국민은행 1234-56-789012')" class="btn">💳 국민은행 신랑 계좌</button>
-        <button onclick="copyAccount('농협 123-45-678901')" class="btn">💳 농협 아버지 계좌</button>
-        <button onclick="copyAccount('신한은행 123-45-678901')" class="btn">💳 신한 어머니 계좌</button>
-      </div>
-      <div class="account-box">
-        <h3>신부측</h3>
-        <button onclick="copyAccount('우리은행 1234-5678-1209')" class="btn">💳 우리은행 신부 계좌</button>
-        <button onclick="copyAccount('하나은행 123-45-645865')" class="btn">💳 하나은행 아버지 계좌</button>
-        <button onclick="copyAccount('카카오뱅크 123-45-456456')" class="btn">💳 카카오뱅크 어머니 계좌</button>
-      </div>
+  <div class="menu-title">카푸치노</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">샷2 +  우유스팀,거품많이 + 시나몬가루토핑 </div>
     </div>
-  </section>
-
-   <!-- 공유하기 -->
-  <section style="max-width:800px;margin:1.5rem auto;padding:1rem;background:#fff;border-radius:12px;box-shadow:var(--shadow);text-align:center;">
-    <h2 style="color:var(--primary);margin-bottom:0.8rem">공유하기</h2>
-    <p>초대장 페이지를 친구에게 쉽게 공유해 보세요.</p>
-    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-      <button id="copy-invite-btn" class="btn">📋 초대 문구 복사</button>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">얼음 + 우유50ml + 샷2 + 거품100ml + 모두따르기 + 시나몬가루토핑</div>
     </div>
-  </section>
+  </div>
+  <div class="menu-title">오트라떼</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">샷2 + 오트우유 200ml 스팀</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">얼음가득 + 오트우유150ml + 샷2</div>
+    </div>
+  </div>
+	<div class="menu-title">돌체라떼</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">연유50g + 샷1 + 저음 + 우유 200ml 스팀</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">연유70g + 샷2 + 저음 + 얼음가득 + 우유150ml</div>
+    </div>
+  </div>
+	<div class="menu-title">카페모카</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">초코소스1펌프 + 샷2 + 저음 + 우유스팀 + 초코드리즐</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">초코소스2펌프 + 샷2 + 저음 + 얼음 + 우유50ml + 거품100ml 모두따르기 + 초코드리즐</div>
+    </div>
+  </div>
+	<div class="menu-title">바닐라라떼</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">바닐라시럽2펌프 + 샷2 + 저음 + 우유200ml스팀</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">바닐라시럽3펌프 + 샷2 + 얼음가득 + 우유150ml(섞기없음)</div>
+    </div>
+  </div>
+		<div class="menu-title">카라멜마끼야또</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">카라멜시럽4펌프 + 우유200ml스팀 + 조금넣고 저음 + 우유거품끝까지따르기 + 샷가운데따르기 + 카라멜드리즐</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">카라멜시럽4펌프 + 우유100ml + 거품후반넣고저음 + 얼음가득 + 찬우유50ml + 우유거품모두따르기 +카라멜드리즐</div>
+    </div>
+  </div>
+	<div class="menu-title">제로슈거바닐라 아몬드라떼</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">티바인라이트바닐라시럽20ml + 샷2 + 아몬드브리즈200ml스팀</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">티바인라이트바닐라시럽30ml + 샷2 + 얼음 + 아몬드브리즈150ml(우유섞기없음)</div>
+    </div>
+  </div>
+	<div class="menu-title">초코라떼</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">초코파우더1스푼 + 우유200ml스팀 + 조금넣고저음 + 나머지따르기 + 초코드리즐</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">초코파우더1스푼 + 뜨거운물조금넣고녹이기 + 얼음가득 + 우유150ml</div>
+    </div>
+  </div>
+	<div class="menu-title">홍차/말차/고구마 라떼</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">파우더1스푼 + 우유200ml스팀 + 조금넣고저음 + 나머지따르기</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">파우더1스푼 + 뜨거운물조금넣고녹이기 + 얼음가득 + 우유150ml</div>
+    </div>
+  </div>
+	<div class="menu-title">미숫가루</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">물</div>
+      <div class="recipe-text">물200ml + 미숫가루1.5스푼(40g) + 시럽8펌프 + 흔들기 + 얼음가득</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">우유</div>
+      <div class="recipe-text">우유전용통 + 우유200ml + 미숫가루1.5스푼(40g) + 시럽5펌프 + 흔들기 + 얼음가득</div>
+    </div>
+  </div>
+	<div class="menu-title">유자/생강/자몽티/ 따뜻한우유</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">유자/생강/자몽티</div>
+      <div class="recipe-text">청60g + 뜨거운물200ml + 저음</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">따뜻한우유</div>
+      <div class="recipe-text">우유200ml스팀</div>
+    </div>
+  </div>
+	<div class="menu-title">애플유자티</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">유자청60g + 애플유자티백우린물225ml + 저음</div>
+    </div>
+    <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">유자청100g + 얼음가득 + 애플유자티백우린물125ml(섞기없음)</div>
+    </div>
+  </div>
+	<div class="menu-title">허브티/캐모마일/페퍼민트/루이보스/히비스커스</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">핫</div>
+      <div class="recipe-text">티백넣기 + 뜨거운물80%넣기 + 바스푼우려내기</div>
+	  </div>
+	  <div class="recipe-row">
+      <div class="recipe-title">아이스</div>
+      <div class="recipe-text">티백 뜨거운물175ml우려내기 + 얼음가득 + 티백우린물붓기</div>
+	  </div>
+  </div>
+  <!-- ❄️ 아이스 -->
+  <div class="category">❄️ 아이스</div>
 
-  <footer>© design pado</footer>
+  <div class="menu-title">복숭아 아이스티/자몽에이드</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">복숭아 아이스티</div>
+      <div class="recipe-text">복숭아원액2 + 찬물조금넣고녹이기 + 얼음가득 + 선까지물붓기</div>
+	  </div>
+	  <div class="recipe-row">
+      <div class="recipe-title">자몽에이드</div>
+      <div class="recipe-text">자몽청70g + 사이다조금넣고 녹이기 + 얼음가득 + 사이다다따르기</div>
+	  </div>
+  </div>
+	 <div class="menu-title">깔라만씨에이드</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">깔라만씨에이드</div>
+      <div class="recipe-text">깔라만씨에이드제로원액50g + 얼음가득 + 제로사이다한캔 + 저음</div>
+	  </div>
+  </div>
+	<div class="menu-title">딸기바나나주스</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">딸기바나나주스</div>
+      <div class="recipe-text">얼음10개 + 냉동딸기160g + 바나나1개 + 물150ml + 시럽8펌프 + 블렌더6</div>
+	  </div>
+  </div>
+	<div class="menu-title">키위바나나주스</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">딸기바나나주스</div>
+      <div class="recipe-text">얼음10개 + 키위1개 + 바나나1개 + 물150ml + 시럽8펌프 + 블렌더6</div>
+	  </div>
+  </div>
+	<div class="menu-title">바나나주스</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">딸기바나나주스</div>
+      <div class="recipe-text">얼음10개 + 바나나1개 + 우유150ml + 시럽8펌프 + 블렌더6</div>
+	  </div>
+  </div>
+		<div class="menu-title">토마토주스</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">딸기바나나주스</div>
+      <div class="recipe-text">얼음10개 + 토마토1개 + 물30ml + 시럽10펌프 + 블렌더6</div>
+	  </div>
+  </div>
 
-  <script>
-    const inviteTitle = '우리💕 결혼해요 — 초대합니다';
-    const inviteDesc  = '저희 결혼식에 초대합니다. 자세한 내용은 초대장 페이지에서 확인해주세요.';
-    const inviteUrl   = location.href;
+  <!-- 🍓 스무디 -->
+  <div class="category">🍓 스무디</div>
 
-    function copyInvite() {
-      const text = `${inviteTitle}\n${inviteDesc}\n${inviteUrl}`;
-      navigator.clipboard.writeText(text).then(() => alert('초대 문구가 복사되었습니다.'));
+  <div class="menu-title">딸기 스무디</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">딸기/키위/망고 스무디</div>
+      <div class="recipe-text">얼음15개 + 스무디펌프4번 + 우유150ml + 블렌더6</div>
+	  </div>
+  </div>
+	<div class="menu-title">요거트 스무디</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">요거트 스무디</div>
+      <div class="recipe-text">얼음18개 + 스무디파우더2.5 + 우유150ml + 블렌더6</div>
+	  </div>
+  </div>
+
+
+
+<!-- 👉 이하 메뉴 전부 그대로 유지 (너 코드 그대로 붙이면 됨) -->
+
+</div>
+
+<script>
+// 아코디언
+const acc = document.querySelectorAll(".accordion");
+
+document.addEventListener("click", function(e){
+  if(e.target.closest(".accordion")){
+    const btn = e.target.closest(".accordion");
+
+    acc.forEach(other => {
+      if (other !== btn) {
+        other.classList.remove("active");
+        other.nextElementSibling.style.maxHeight = null;
+        other.querySelector(".icon").textContent = "+";
+      }
+    });
+
+    const panel = btn.nextElementSibling;
+    const icon = btn.querySelector(".icon");
+
+    btn.classList.toggle("active");
+
+    if (panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+      icon.textContent = "+";
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      icon.textContent = "-";
     }
+  }
+});
+</script>
 
-    document.getElementById('copy-invite-btn').addEventListener('click', copyInvite);
-  </script>
+<!-- ✅ 서비스워커 (inline 버전) -->
+<script>
+if ('serviceWorker' in navigator) {
+
+  const swCode = `
+    const CACHE_NAME = "cafe-menu-v1";
+    self.addEventListener("install", e=>{
+      e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(["./"])))
+    });
+    self.addEventListener("fetch", e=>{
+      e.respondWith(
+        caches.match(e.request).then(r=>r || fetch(e.request))
+      );
+    });
+  `;
+
+  const blob = new Blob([swCode], {type: 'text/javascript'});
+  const swURL = URL.createObjectURL(blob);
+
+  navigator.serviceWorker.register(swURL);
+}
+</script>
+
 </body>
 </html>
