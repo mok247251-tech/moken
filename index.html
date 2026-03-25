@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이음카페</title>
+<title>카페 메뉴</title>
 
-<!-- ✅ PWA (외부파일 없이 inline 처리) -->
+<!-- ✅ manifest를 HTML 내부에 삽입 -->
+<link rel="manifest" id="manifest-placeholder">
 <meta name="theme-color" content="#6b4f4f">
-
-<!-- 아이콘 (임시 base64 or 추후 교체 가능) -->
-<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA">
 
 <style>
 body {
@@ -39,6 +37,7 @@ body {
   cursor: pointer;
   padding: 14px;
   width: 100%;
+  text-align: left;
   border: none;
   border-bottom: 1px solid #eee;
   font-size: 1rem;
@@ -83,45 +82,32 @@ body {
 </head>
 
 <body>
-
 <div class="menu">
 
- <!-- 🔥 핫 -->
+  <!-- 🔥 핫 -->
  <div class="category">🔥 핫 / ❄️ 아이스</div>
 
   <div class="menu-title">아메리카노</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
+  <button class="accordion">레시피 보기 <span class="icon">+</span></button>
   <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">뜨거운물 200ml + 샷1</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">얼음가득 + 찬물200ml + 샷2</div>
-    </div>
+    <div class="recipe-row"><div class="recipe-title">핫</div><div class="recipe-text">뜨거운물 200ml + 샷1</div></div>
+    <div class="recipe-row"><div class="recipe-title">아이스</div><div class="recipe-text">얼음가득 + 찬물200ml + 샷2</div></div>
   </div>
 
   <div class="menu-title">카페라떼</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
+  <button class="accordion">레시피 보기 <span class="icon">+</span></button>
   <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">샷2 + 우유 200ml 스팀</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">얼음가득 + 우유150ml + 샷2</div>
-    </div>
+    <div class="recipe-row"><div class="recipe-title">핫</div><div class="recipe-text">샷2 + 우유 200ml 스팀</div></div>
+    <div class="recipe-row"><div class="recipe-title">아이스</div><div class="recipe-text">얼음가득 + 우유150ml + 샷2</div></div>
   </div>
 
   <div class="menu-title">카푸치노</div>
+  <button class="accordion">레시피 보기 <span class="icon">+</span></button>
+  <div class="panel">
+    <div class="recipe-row"><div class="recipe-title">핫</div><div class="recipe-text">샷2 + 우유스팀,거품많이 + 시나몬가루토핑</div></div>
+    <div class="recipe-row"><div class="recipe-title">아이스</div><div class="recipe-text">얼음 + 우유50ml + 샷2 + 거품100ml + 모두따르기 + 시나몬가루토핑</div></div>
+  </div>
+	<div class="menu-title">카푸치노</div>
   <button class="accordion">
     레시피 보기
     <span class="icon">+</span>
@@ -208,7 +194,7 @@ body {
     </div>
     <div class="recipe-row">
       <div class="recipe-title">아이스</div>
-      <div class="recipe-text">카라멜시럽4펌프 + 우유100ml + 거품후반넣고저음 + 얼음가득 + 찬우유50ml + 우유거품모두따르기 +카라멜드리즐</div>
+      <div class="recipe-text">카라멜시럽4펌프 + 우유100ml + 거품후반넣고저음 + 얼음가득 + 찬우유50ml + 우유거품모두따르기 + 샷가운데따르기 + 카라멜드리즐</div>
     </div>
   </div>
 	<div class="menu-title">제로슈거바닐라 아몬드라떼</div>
@@ -316,6 +302,10 @@ body {
       <div class="recipe-text">티백 뜨거운물175ml우려내기 + 얼음가득 + 티백우린물붓기</div>
 	  </div>
   </div>
+
+
+  <!-- 👉 나머지 메뉴 전부 동일하게 유지 (생략 없이 그대로 포함됨) -->
+
   <!-- ❄️ 아이스 -->
   <div class="category">❄️ 아이스</div>
 
@@ -393,7 +383,7 @@ body {
   <!-- 🍓 스무디 -->
   <div class="category">🍓 스무디</div>
 
-  <div class="menu-title">딸기 스무디</div>
+	<div class="menu-title">딸기/키위/망고 스무디</div>
   <button class="accordion">
     레시피 보기
     <span class="icon">+</span>
@@ -402,6 +392,17 @@ body {
     <div class="recipe-row">
       <div class="recipe-title">딸기/키위/망고 스무디</div>
       <div class="recipe-text">얼음15개 + 스무디펌프4번 + 우유150ml + 블렌더6</div>
+	  </div>
+  </div>
+	<div class="menu-title">밀크 쉐이크</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">밀크 쉐이크</div>
+      <div class="recipe-text">얼음18개 + 밀크쉐이크 파우더2.5 + 우유150ml + 블렌더6</div>
 	  </div>
   </div>
 	<div class="menu-title">요거트 스무디</div>
@@ -415,15 +416,28 @@ body {
       <div class="recipe-text">얼음18개 + 스무디파우더2.5 + 우유150ml + 블렌더6</div>
 	  </div>
   </div>
+	
+  <!-- 🌸 봄 -->
+  <div class="category">🌸 봄 시즌 메뉴</div>
 
-
-
-<!-- 👉 이하 메뉴 전부 그대로 유지 (너 코드 그대로 붙이면 됨) -->
-
+  <div class="menu-title">딸기라떼/딸기스무디</div>
+  <button class="accordion">
+    레시피 보기
+    <span class="icon">+</span>
+  </button>
+  <div class="panel">
+    <div class="recipe-row">
+      <div class="recipe-title">딸기라떼</div>
+      <div class="recipe-text">딸기청100g + 얼음가득 + 우유150ml + 딸기슬라이스3개</div>
+	  </div>
+<div class="recipe-row">
+      <div class="recipe-title">딸기요거트스무디</div>
+      <div class="recipe-text">얼음18개 + 요거트파우더1 + 딸기스무디1펌프 + 우유100g + 블렌더6 + 딸기청100g + 요거트스무디(블렌더 간음료) + 건조딸기 바스푼1</div>
+	  </div>
 </div>
 
 <script>
-// 아코디언
+/* ✅ 아코디언 */
 const acc = document.querySelectorAll(".accordion");
 
 document.addEventListener("click", function(e){
@@ -454,24 +468,44 @@ document.addEventListener("click", function(e){
 });
 </script>
 
-<!-- ✅ 서비스워커 (inline 버전) -->
 <script>
+/* ✅ manifest를 JS로 생성 (파일 없이) */
+const manifest = {
+  name: "카페 메뉴",
+  short_name: "카페메뉴",
+  start_url: ".",
+  display: "standalone",
+  background_color: "#f7f3f0",
+  theme_color: "#6b4f4f",
+  icons: []
+};
+
+const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+const manifestURL = URL.createObjectURL(blob);
+document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+</script>
+
+<script>
+/* ✅ 서비스워커도 JS로 생성 */
 if ('serviceWorker' in navigator) {
 
   const swCode = `
-    const CACHE_NAME = "cafe-menu-v1";
-    self.addEventListener("install", e=>{
-      e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(["./"])))
+    const CACHE_NAME = 'cafe-app-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(
+        caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
+      );
     });
-    self.addEventListener("fetch", e=>{
+
+    self.addEventListener('fetch', e => {
       e.respondWith(
-        caches.match(e.request).then(r=>r || fetch(e.request))
+        caches.match(e.request).then(res => res || fetch(e.request))
       );
     });
   `;
 
-  const blob = new Blob([swCode], {type: 'text/javascript'});
-  const swURL = URL.createObjectURL(blob);
+  const swBlob = new Blob([swCode], { type: 'text/javascript' });
+  const swURL = URL.createObjectURL(swBlob);
 
   navigator.serviceWorker.register(swURL);
 }
