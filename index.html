@@ -2,501 +2,1314 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>카페 메뉴</title>
-
-<!-- ✅ manifest를 HTML 내부에 삽입 -->
-<link rel="manifest" id="manifest-placeholder">
-<meta name="theme-color" content="#6b4f4f">
-
+<!-- 모바일 화면 자동 맞춤 설정 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>모던 카페 POS</title>
 <style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f7f3f0;
-  padding: 10px;
-  margin: 0;
-}
+  :root {
+    --primary-color: #2e6f40;
+    --primary-hover: #245732;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-sub: #4b5563;
+    --hot-color: #ef4444;
+    --ice-color: #3b82f6;
+    --border-color: #e5e7eb;
+  }
 
-.menu { max-width: 100%; margin: auto; }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', '맑은 고딕', -apple-system, sans-serif;
+    /* 모바일 터치 시 하이라이트 잔상 제거 */
+    -webkit-tap-highlight-color: transparent;
+  }
 
-.category {
-  font-size: 1.4rem;
-  font-weight: bold;
-  margin: 25px 0 10px;
-  color: #6b4f4f;
-}
+  body {
+    background: var(--bg-color);
+    padding: 20px 16px;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
 
-.menu-title {
-  font-size: 1.1rem;
-  padding: 12px 5px;
-  color: #333;
-}
+  /* 반응형 컨테이너 (기본: PC) */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* PC: 3열 카드 배치 */
+    gap: 20px;
+    align-items: start;
+  }
 
-.accordion {
-  background: #fff;
-  cursor: pointer;
-  padding: 14px;
-  width: 100%;
-  text-align: left;
-  border: none;
-  border-bottom: 1px solid #eee;
-  font-size: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .section {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+  }
 
-.icon { font-size: 1.4rem; }
+  .topBtn {
+    width: 100%;
+    height: 56px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(46, 111, 64, 0.2);
+  }
 
-.panel {
-  max-height: 0;
-  overflow: hidden;
-  background: #fff;
-  transition: max-height 0.3s ease;
-}
+  .topBtn:active {
+    transform: scale(0.98);
+  }
 
-.recipe-row {
-  display: flex;
-  gap: 10px;
-  padding: 12px;
-  font-size: 0.95rem;
-  border-top: 1px solid #eee;
-}
+  .menu {
+    display: none;
+    margin-top: 15px;
+  }
 
-.recipe-title {
-  min-width: 60px;
-  font-weight: bold;
-}
+  .menu.active {
+    display: block;
+    animation: fadeIn 0.25s ease-in-out;
+  }
 
-.recipe-text { color: #555; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-.accordion.active { background: #f0ebe8; }
+  /* 음료 메뉴 스타일 */
+  .drink {
+    margin-bottom: 12px;
+  }
 
-@media (max-width: 480px) {
-  .category { font-size: 1.5rem; }
-  .menu-title { font-size: 1.2rem; }
-  .accordion { font-size: 1.1rem; padding: 16px; }
-  .recipe-row { font-size: 1rem; }
-}
+  .drink-btn {
+    width: 100%;
+    height: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    background: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .drink-btn:active {
+    background: #eef2ff;
+  }
+
+  .hotice {
+    display: none;
+    margin-top: 8px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+    border: 1px dashed var(--border-color);
+  }
+
+  .hotice-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-hot, .btn-ice {
+    flex: 1;
+    height: 44px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-hot {
+    background: #fee2e2;
+    color: var(--hot-color);
+  }
+
+  .btn-hot:active {
+    background: var(--hot-color);
+    color: #ffffff;
+  }
+
+  .btn-ice {
+    background: #dbeafe;
+    color: var(--ice-color);
+  }
+
+  .btn-ice:active {
+    background: var(--ice-color);
+    color: #ffffff;
+  }
+	
+	
+  /* 레시피 내용 박스 스타일 */
+  .recipe-box {
+    display: none;
+    margin-top: 10px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+  }
+
+  .recipe-box.active {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  /* 일반 메뉴 및 결제 버튼 */
+  .item {
+    width: 100%;
+    height: 50px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    background: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .item:active {
+    background: #f0fdf4;
+  }
+
+  /* ===================================================
+     반응형 미디어 쿼리 (태블릿 & 핸드폰)
+     =================================================== */
+
+  /* 1. 태블릿 반응형 (화면 너비 900px 이하) */
+  @media (max-width: 900px) {
+    .container {
+      grid-template-columns: repeat(2, 1fr); /* 2열 배치 */
+      gap: 16px;
+    }
+  }
+
+  /* 2. 스마트폰 반응형 (화면 너비 600px 이하) */
+  @media (max-width: 600px) {
+    body {
+      padding: 12px 10px;
+    }
+
+    .container {
+      grid-template-columns: 1fr; /* 1열 수직 배치 */
+      gap: 12px;
+    }
+
+    .section {
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    .topBtn {
+      height: 52px;
+      font-size: 16px;
+    }
+
+    .drink-btn, .item {
+      height: 48px;
+      font-size: 14px;
+    }
+
+    .btn-hot, .btn-ice {
+      height: 42px;
+      font-size: 13px;
+    }
+
+    .recipe-box {
+      font-size: 12px;
+      padding: 10px;
+    }
+  }
+	
+  :root {
+    --primary-color: #2e6f40;
+    --primary-hover: #245732;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-sub: #4b5563;
+    --hot-color: #ef4444;
+    --ice-color: #3b82f6;
+    --border-color: #e5e7eb;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', '맑은 고딕', -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--bg-color);
+    padding: 20px 16px;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  /* 반응형 컨테이너 */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  .section {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topBtn {
+    width: 100%;
+    height: 56px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(46, 111, 64, 0.2);
+  }
+
+  .topBtn:active {
+    transform: scale(0.98);
+  }
+
+  .menu {
+    display: none;
+    margin-top: 15px;
+  }
+
+  .menu.active {
+    display: block;
+    animation: fadeIn 0.25s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 공통 메뉴 버튼 스타일 (음료 & 빵) */
+  .drink, .bread-item {
+    margin-bottom: 12px;
+  }
+
+  .drink-btn, .item-btn {
+    width: 100%;
+    height: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    background: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .drink-btn:active, .item-btn:active {
+    background: #eef2ff;
+  }
+
+  /* 핫/아이스 토글 영역 */
+  .hotice {
+    display: none;
+    margin-top: 8px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+    border: 1px dashed var(--border-color);
+  }
+
+  .hotice-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-hot, .btn-ice, .btn-single {
+    flex: 1;
+    height: 44px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-hot {
+    background: #fee2e2;
+    color: var(--hot-color);
+  }
+
+  .btn-hot:active {
+    background: var(--hot-color);
+    color: #ffffff;
+  }
+
+  .btn-ice {
+    background: #dbeafe;
+    color: var(--ice-color);
+  }
+
+  .btn-ice:active {
+    background: var(--ice-color);
+    color: #ffffff;
+  }
+
+  /* 단일 레시피 버튼 (밀크쉐이크 등) */
+  .btn-single {
+    background: #e5e7eb;
+    color: var(--text-main);
+  }
+
+  .btn-single:active {
+    background: var(--primary-color);
+    color: #ffffff;
+  }
+
+  /* 레시피 & 빵 상세 안내 내용 박스 */
+  .recipe-box, .bread-info {
+    display: none;
+    margin-top: 10px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+  }
+
+  .recipe-box.active, .bread-info.active {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  /* 결제용 버튼 */
+  .pay-item {
+    width: 100%;
+    height: 50px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    background: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pay-item:active {
+    background: #f0fdf4;
+  }
+
+  /* 반응형 미디어 쿼리 */
+  @media (max-width: 900px) {
+    .container {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    body {
+      padding: 12px 10px;
+    }
+
+    .container {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .section {
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    .topBtn {
+      height: 52px;
+      font-size: 16px;
+    }
+
+    .drink-btn, .item-btn, .pay-item {
+      height: 48px;
+      font-size: 14px;
+    }
+
+    .btn-hot, .btn-ice, .btn-single {
+      height: 42px;
+      font-size: 13px;
+    }
+
+    .recipe-box, .bread-info {
+      font-size: 12px;
+      padding: 10px;
+    }
+  }
+	
+	
+	
+	
 </style>
 </head>
-
 <body>
-<div class="menu">
 
-  <!-- 🔥 핫 -->
- <div class="category">🔥 핫 / ❄️ 아이스</div>
+<div class="container">
 
-  <div class="menu-title">아메리카노</div>
-  <button class="accordion">레시피 보기 <span class="icon">+</span></button>
-  <div class="panel">
-    <div class="recipe-row"><div class="recipe-title">핫</div><div class="recipe-text">뜨거운물 240ml + 샷1</div></div>
-    <div class="recipe-row"><div class="recipe-title">아이스</div><div class="recipe-text">얼음가득 + 찬물200ml + 샷2</div></div>
+  <!-- 1. 레시피 섹션 -->
+  <div class="section">
+    <button class="topBtn" onclick="openMenu('recipe')">☕ 레시피</button>
+
+    <div id="recipe" class="menu">
+      
+      <!-- 아메리카노 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">아메리카노</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 뜨거운 물 240ml<br>
+            • 1샷
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음 가득<br>
+            • 찬물 200ml<br>
+            • 2샷
+          </div>
+        </div>
+      </div>
+
+      <!-- 카페라떼 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">카페라떼</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 2샷<br>
+            • 우유스팀200ml
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음 가득<br>
+            • 찬 우유 175ml<br>
+            • 2샷
+          </div>
+        </div>
+      </div>
+
+      <!-- 카푸치노 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">카푸치노</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 샷2<br>
+            • 우유200ml스팀<br>
+            • 거품많이<br>
+            • 시나몬가루토핑
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음<br>
+            • 찬 우유 50ml<br>
+            • 2샷<br>
+            • 거품100ml<br>
+			• 모두따르기<br>
+			• 시나몬가루토핑  
+          </div>
+        </div>
+      </div>
+
+      <!-- 오트라떼 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">오트라떼</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 샷2<br>
+            • 오트 우유 200ml스팀<br>
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음 가득<br>
+            • 오트 우유 175ml<br>
+            • 2샷
+          </div>
+        </div>
+      </div>
+		
+<!-- 돌체라떼 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">돌체라떼</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 연유50g<br>
+            • 샷1<br>
+            • 저음<br>
+            • 우유200ml스팀
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 연유70g<br>
+            • 2샷<br>
+            • 저음<br>
+            • 얼음가득<br>
+			• 우유150ml  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 카페모카 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">카페모카</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 초코소스1펌프<br>
+            • 샷2<br>
+            • 저음<br>
+            • 우유스팀<br>
+			• 초코드리즐 
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 초코소스2펌프<br>
+            • 2샷<br>
+            • 저음<br>
+            • 얼음<br>
+			• 우유50ml<br>
+			• 거품100ml 모두따르기<br>
+			• 초코드리즐  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 바닐라라떼 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">바닐라라떼</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 바닐라시럽2펌프<br>
+            • 샷2<br>
+            • 저음<br>
+            • 우유200ml스팀<br> 
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 바닐라시럽3펌프<br>
+            • 2샷<br>
+            • 저음<br>
+            • 얼음가득<br>
+			• 우유150ml(섞기없음)<br> 
+          </div>
+        </div>
+      </div>
+		
+		<!-- 카라멜마끼야또 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">카라멜마끼야또</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 카라멜시럽4펌프<br>
+            • 우유200ml스팀<br>
+            • 조금넣고 저음<br>
+            • 우유거품끝까지 따르기<br>
+			• 샷1잔 가운데 따르기<br>
+			• 카라멜 드리즐<br>
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 카라멜시럽4펌프<br>
+            • 우유100ml<br>
+            • 거품후반넣고저음<br>
+            • 얼음가득<br>
+			• 찬 우유50ml<br>
+			• 우유거품모두따르기<br> 
+			• 샷1잔 가운데 따르기<br> 
+			• 카라멜 드리즐<br>   
+          </div>
+        </div>
+      </div>
+		
+		<!-- 제로슈거바닐라 아몬드라떼 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">제로슈거바닐라 아몬드라떼</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 티바인라이트바닐라시럽20ml<br>
+            • 샷2<br>
+            • 아몬드브리즈200ml스팀<br>
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 티바인라이트바닐라시럽30ml<br>
+            • 샷2<br>
+            • 얼음<br>
+            • 아몬드브리즈150ml(우유섞기없음)<br>
+          </div>
+        </div>
+      </div>
+		
+		<!-- 초코라떼 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">초코라떼</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 초코파우더1스푼<br>
+            • 우유200ml스팀<br>
+			• 조금넣고저음<br>  
+            • 나머지따르기<br>
+			• 초코드리즐  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 초코파우더1스푼<br>
+            • 뜨거운물조금넣고녹이기<br>
+            • 얼음가득<br>
+            • 찬우유 150ml<br>
+          </div>
+        </div>
+      </div>
+		
+		<!-- 홍차/말차/고구마 라떼 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">홍차/말차/고구마 라떼</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">HOT</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ICE</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 파우더1스푼<br>
+            • 우유200ml스팀<br>
+			• 조금넣고저음<br>  
+            • 나머지따르기<br> 
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 파우더1스푼<br>
+            • 뜨거운물조금넣고녹이기<br>
+            • 얼음가득<br>
+            • 찬우유 150ml<br>
+          </div>
+        </div>
+      </div>
+		
+		<!-- 미숫가루 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">미숫가루</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">물</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">우유</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 물200ml<br>
+            • 미숫가루 1.5스푼(40g)<br>
+			• 시럽8펌프<br>  
+            • 흔들기<br> 
+			• 얼음가득<br>  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 우유전용통<br>
+            • 우유200ml<br>
+            • 미숫가루1.5스푼(40g)<br>
+            • 시럽5펌프<br>
+			• 얼음가득  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 유자/생강/자몽티/따뜻한우유 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">유자/생강/자몽티/따뜻한우유</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">티</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">따뜻한우유</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 유자/생강/자몽티 청60g<br>
+            • 뜨거운물200ml<br>
+			• 저음  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 우유200ml스팀<br> 
+          </div>
+        </div>
+      </div>
+		
+		<!-- 애플유자티 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">애플유자티</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">hot</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ice</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 유자청60g<br>
+            • 티백우린물225ml<br>
+			• 저음  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 유자청100g<br>
+			• 얼음가득<br>
+			• 티백우린물125ml(섞기없음)<br>  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 허브/캐모마일/페퍼민트/루이보스/히비스커스 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">허브티</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">hot</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">ice</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 티백넣기<br>
+            • 뜨거운물80%넣기<br>
+			• 바스푼우려내기  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 티백 뜨거운물175ml우려내기<br>
+			• 얼음가득<br>
+			• 티백우린물붓기<br>  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 복숭아아이스티/자몽에이드 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">복숭아아이스티/자몽에이드</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">복숭아아이스티</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">자몽에이드</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 복숭아원액2펌프(36g)<br>
+            • 찬물조금넣고녹이기<br>
+			• 얼음가득<br>  
+			• (얼음컵)선까지물붓기  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 자몽청70g<br>
+			• 사이다조금넣고녹이기<br>
+			• 얼음가득<br> 
+			• 사이다 다따르기<br>  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 레몬에이드/깔라만씨에이드 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">레몬에이드/깔라만씨에이드</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">레몬에이드</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">깔라만씨에이드</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 레몬농축액40ml<br>
+            • 시럽2펌프<br>
+			• 사이다조금넣고녹이기<br>
+			• 얼음가득<br>  
+			• 사이다  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 깔라만씨에이드 원액50g<br>
+			• 얼음가득<br>
+			• 제로사이다한캔<br> 
+			• 저음<br>  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 딸기바나나/키위바나나주스 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">딸기바나나/키위바나나 주스</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">딸기바나나주스</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">키위바나나주스</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 얼음10개<br>
+            • 냉동딸기160g<br>
+			• 바나나1개<br>
+			• 물150ml<br>  
+			• 시럽8펌프
+			• 블렌더6  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음10개<br>
+			• 키위1개<br>
+			• 바나나1개<br> 
+			• 물150ml<br>
+			• 시럽8펌프<br> 
+			• 블렌더6  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 바나나/토마토주스 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">바나나/토마토주스</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">바나나주스</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">토마토주스</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 얼음10개<br>
+            • 바나나1개<br>
+			• 우유150ml<br>
+			• 물150ml<br>  
+			• 시럽8펌프
+			• 블렌더6  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음10개<br>
+			• 토마토1개<br>
+			• 물30ml<br> 
+			• 시럽10펌프<br> 
+			• 블렌더6  
+          </div>
+        </div>
+      </div>
+		
+		<!-- 딸기/키위/망고/요거트 스무디 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">딸기/키위/망고 스무디/요거트스무디</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">딸기/키위/망고 스무디</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">요거트스무디</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 얼음15개<br>
+            • 스무디펌프4<br>
+			• 우유150ml<br>
+			• 블렌더6  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음18개<br>
+			• 스무디파우더2.5<br>
+			• 우유150ml<br> 
+			• 블렌더6  
+          </div>
+        </div>
+      </div>
+		
+			<!-- 딸기라떼 딸기요거트스무디 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">딸기라떼/딸기요거트스무디</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">딸기라떼</button>
+            <button class="btn-ice" onclick="toggleRecipe(this, 'ice')">딸기요거트 스무디</button>
+          </div>
+          <div class="recipe-box recipe-hot">
+            • 딸기청100g<br>
+            • 얼음가득<br>
+			• 우유150ml<br>
+			• 딸기슬라이스3개  
+          </div>
+          <div class="recipe-box recipe-ice">
+            • 얼음18개<br>
+			• 요거트파우더2.5<br>
+			• 딸기스무디1펌프<br> 
+			• 우유100g
+			• 블렌더6
+			• 딸기청100g
+			• 요거트스무디(블렌더간음료)
+			• 건조딸기 바스푼1  
+          </div>
+        </div>
+      </div>  
+			<!-- 밀크쉐이크 -->
+      <div class="drink">
+        <button class="drink-btn" onclick="openDrink(this)">밀크쉐이크</button>
+        <div class="hotice">
+          <div class="hotice-group">
+            <button class="btn-hot" onclick="toggleRecipe(this, 'hot')">밀크쉐이크</button>
+          <div class="recipe-box recipe-hot">
+            • 얼음18개<br>
+            • 밀크쉐이크파우더 2.5<br>
+			• 우유150ml<br>
+			• 블렌더6  
+          </div>
+        </div>  
+			  
+        </div>
+      </div>
+		
+    </div>
   </div>
 
-  <div class="menu-title">카페라떼</div>
-  <button class="accordion">레시피 보기 <span class="icon">+</span></button>
-  <div class="panel">
-    <div class="recipe-row"><div class="recipe-title">핫</div><div class="recipe-text">샷2 + 우유 200ml 스팀</div></div>
-    <div class="recipe-row"><div class="recipe-title">아이스</div><div class="recipe-text">얼음가득 + 우유175ml + 샷2</div></div>
-  </div>
+ <!-- 2. 빵 브레드 섹션 -->
+<div class="section">
+  <button class="topBtn" onclick="openMenu('bread')">🥐 빵 브레드</button>
 
-  <div class="menu-title">카푸치노</div>
-  <button class="accordion">레시피 보기 <span class="icon">+</span></button>
-  <div class="panel">
-    <div class="recipe-row"><div class="recipe-title">핫</div><div class="recipe-text">샷2 + 우유스팀,거품많이 + 시나몬가루토핑</div></div>
-    <div class="recipe-row"><div class="recipe-title">아이스</div><div class="recipe-text">얼음 + 우유50ml + 샷2 + 거품100ml + 모두따르기 + 시나몬가루토핑</div></div>
-  </div>
-  <div class="menu-title">오트라떼</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">샷2 + 오트우유 200ml 스팀</div>
+  <div id="bread" class="menu">
+    <!-- 마늘바게트 -->
+    <div class="bread-item">
+      <button class="item-btn" onclick="openBreadInfo(this)">마늘바게트</button>
+      <div class="bread-info">
+        • 포장지뜯고 전용용기에<br>
+        • 전자렌지 해동30초 후<br>
+        • 전자렌지 강 60초<br>
+        • 포장시 포크&amp;나이프<br>
+        • 전용지에넣어 종이백에포장
+      </div>
     </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">얼음가득 + 오트우유150ml + 샷2</div>
-    </div>
-  </div>
-	<div class="menu-title">돌체라떼</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">연유50g + 샷1 + 저음 + 우유 200ml 스팀</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">연유70g + 샷2 + 저음 + 얼음가득 + 우유150ml</div>
-    </div>
-  </div>
-	<div class="menu-title">카페모카</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">초코소스1펌프 + 샷2 + 저음 + 우유스팀 + 초코드리즐</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">초코소스2펌프 + 샷2 + 저음 + 얼음 + 우유50ml + 거품100ml 모두따르기 + 초코드리즐</div>
-    </div>
-  </div>
-	<div class="menu-title">바닐라라떼</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">바닐라시럽2펌프 + 샷2 + 저음 + 우유200ml스팀</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">바닐라시럽3펌프 + 샷2 + 얼음가득 + 우유150ml(섞기없음)</div>
-    </div>
-  </div>
-		<div class="menu-title">카라멜마끼야또</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">카라멜시럽4펌프 + 우유200ml스팀 + 조금넣고 저음 + 우유거품끝까지따르기 + 샷1잔 가운데따르기 + 카라멜드리즐</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">카라멜시럽4펌프 + 우유100ml + 거품후반넣고저음 + 얼음가득 + 찬우유50ml + 우유거품모두따르기 + 샷1잔 가운데따르기 + 카라멜드리즐</div>
-    </div>
-  </div>
-	<div class="menu-title">제로슈거바닐라 아몬드라떼</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">티바인라이트바닐라시럽20ml + 샷2 + 아몬드브리즈200ml스팀</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">티바인라이트바닐라시럽30ml + 샷2 + 얼음 + 아몬드브리즈150ml(우유섞기없음)</div>
-    </div>
-  </div>
-	<div class="menu-title">초코라떼</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">초코파우더1스푼 + 우유200ml스팀 + 조금넣고저음 + 나머지따르기 + 초코드리즐</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">초코파우더1스푼 + 뜨거운물조금넣고녹이기 + 얼음가득 + 우유150ml</div>
-    </div>
-  </div>
-	<div class="menu-title">홍차/말차/고구마 라떼</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">파우더1스푼 + 우유200ml스팀 + 조금넣고저음 + 나머지따르기</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">파우더1스푼 + 뜨거운물조금넣고녹이기 + 얼음가득 + 우유150ml</div>
-    </div>
-  </div>
-	<div class="menu-title">미숫가루</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">물</div>
-      <div class="recipe-text">물200ml + 미숫가루1.5스푼(40g) + 시럽8펌프 + 흔들기 + 얼음가득</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">우유</div>
-      <div class="recipe-text">우유전용통 + 우유200ml + 미숫가루1.5스푼(40g) + 시럽5펌프 + 흔들기 + 얼음가득</div>
-    </div>
-  </div>
-	<div class="menu-title">유자/생강/자몽티/ 따뜻한우유</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">유자/생강/자몽티</div>
-      <div class="recipe-text">청60g + 뜨거운물200ml + 저음</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">따뜻한우유</div>
-      <div class="recipe-text">우유200ml스팀</div>
-    </div>
-  </div>
-	<div class="menu-title">애플유자티</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">유자청60g + 애플유자티백우린물225ml + 저음</div>
-    </div>
-    <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">유자청100g + 얼음가득 + 애플유자티백우린물125ml(섞기없음)</div>
-    </div>
-  </div>
-	<div class="menu-title">허브티/캐모마일/페퍼민트/루이보스/히비스커스</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">핫</div>
-      <div class="recipe-text">티백넣기 + 뜨거운물80%넣기 + 바스푼우려내기</div>
-	  </div>
-	  <div class="recipe-row">
-      <div class="recipe-title">아이스</div>
-      <div class="recipe-text">티백 뜨거운물175ml우려내기 + 얼음가득 + 티백우린물붓기</div>
-	  </div>
-  </div>
 
+    <!-- 생크림카스테라 -->
+    <div class="bread-item">
+      <button class="item-btn" onclick="openBreadInfo(this)">생크림카스테라</button>
+      <div class="bread-info">
+        • 포장지뜯고 전용용기에<br>
+        • 전자렌지 강 20초<br>
+        • 포장시 포크&amp;나이프<br>
+        • 전용지에넣어 종이백에포장
+      </div>
+    </div>
 
-  <!-- 👉 나머지 메뉴 전부 동일하게 유지 (생략 없이 그대로 포함됨) -->
+    <!-- 번 / 머핀 -->
+    <div class="bread-item">
+      <button class="item-btn" onclick="openBreadInfo(this)">번 / 머핀</button>
+      <div class="bread-info">
+        • 포장지뜯고 전용용기에<br>
+        • 전자레인지 해동 1분 30초<br>
+        • 포장시 포크&amp;나이프<br>
+        • 전용지에넣어 종이백에포장	
+      </div>
+    </div>
 
-  <!-- ❄️ 아이스 -->
-  <div class="category">❄️ 아이스</div>
+    <!-- 와플 -->
+    <div class="bread-item">
+      <button class="item-btn" onclick="openBreadInfo(this)">와플</button>
+      <div class="bread-info">
+        • 토스트기 3에서1번 2에서1번 <br>
+        • 플레인와플 > 설탕가루만뿌리기 <br>
+        • 생크림와플 > 설탕 + 휘핑크림 + 카라멜시럽드리즐<br>
+        • 포장시 포크&amp;나이프<br>
+        • 전용지에넣어 종이백에포장	
+      </div>
+    </div>
 
-  <div class="menu-title">복숭아 아이스티/자몽에이드</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">복숭아 아이스티</div>
-      <div class="recipe-text">복숭아원액2펌프(36g) + 찬물조금넣고녹이기 + 얼음가득 + 선까지물붓기</div>
-	  </div>
-	  <div class="recipe-row">
-      <div class="recipe-title">자몽에이드</div>
-      <div class="recipe-text">자몽청70g + 사이다조금넣고 녹이기 + 얼음가득 + 사이다다따르기</div>
-	  </div>
+    <!-- 베이글 -->
+    <div class="bread-item">
+      <button class="item-btn" onclick="openBreadInfo(this)">베이글</button>
+      <div class="bread-info">
+        • 전자렌지 해동1분 후<br>
+        • 토스트기 맨밑에 5 베이글버튼누름<br>
+        • 포장시 포크&amp;나이프<br>
+        • 전용지에넣어 종이백에포장	
+      </div>
+    </div>
   </div>
-	<div class="menu-title">레몬에이드/깔라만씨에이드</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">레몬에이드</div>
-      <div class="recipe-text">레몬농축액40ml + 시럽2펌프 + 사이다조금넣고녹이기 + 얼음가득 + 사이다</div>
-	  </div>
-	  <div class="recipe-row">
-      <div class="recipe-title">깔라만씨에이드</div>
-      <div class="recipe-text">원액50g + 얼음가득 + 제로사이다한캔 + 저음</div>
-	  </div>
-  </div>
-	<div class="menu-title">딸기바나나주스</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">딸기바나나주스</div>
-      <div class="recipe-text">얼음10개 + 냉동딸기160g + 바나나1개 + 물150ml + 시럽8펌프 + 블렌더6</div>
-	  </div>
-  </div>
-	<div class="menu-title">키위바나나주스</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">키위바나나주스</div>
-      <div class="recipe-text">얼음10개 + 키위1개 + 바나나1개 + 물150ml + 시럽8펌프 + 블렌더6</div>
-	  </div>
-  </div>
-	<div class="menu-title">바나나주스</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">바나나주스</div>
-      <div class="recipe-text">얼음10개 + 바나나1개 + 우유150ml + 시럽8펌프 + 블렌더6</div>
-	  </div>
-  </div>
-		<div class="menu-title">토마토주스</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">토마토주스</div>
-      <div class="recipe-text">얼음10개 + 토마토1개 + 물30ml + 시럽10펌프 + 블렌더6</div>
-	  </div>
-  </div>
+</div>
 
-  <!-- 🍓 스무디 -->
-  <div class="category">🍓 스무디</div>
+<style>
+  /* 기본 메뉴/버튼 스타일 */
+  .bread-item {
+    margin-bottom: 8px;
+  }
 
-	<div class="menu-title">딸기/키위/망고 스무디</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">딸기/키위/망고 스무디</div>
-      <div class="recipe-text">얼음15개 + 스무디펌프4번 + 우유150ml + 블렌더6</div>
-	  </div>
-  </div>
-	<div class="menu-title">밀크 쉐이크</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">밀크 쉐이크</div>
-      <div class="recipe-text">얼음18개 + 밀크쉐이크 파우더2.5 + 우유150ml + 블렌더6</div>
-	  </div>
-  </div>
-	<div class="menu-title">요거트 스무디</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">요거트 스무디</div>
-      <div class="recipe-text">얼음18개 + 스무디파우더2.5 + 우유150ml + 블렌더6</div>
-	  </div>
-  </div>
-	
-  <!-- 🌸 봄 -->
-  <div class="category">🌸 봄 시즌 메뉴</div>
+  .item-btn {
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    background-color: #f1f3f5;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
 
-  <div class="menu-title">딸기라떼/딸기스무디</div>
-  <button class="accordion">
-    레시피 보기
-    <span class="icon">+</span>
-  </button>
-  <div class="panel">
-    <div class="recipe-row">
-      <div class="recipe-title">딸기라떼</div>
-      <div class="recipe-text">딸기청100g + 얼음가득 + 우유150ml + 딸기슬라이스3개</div>
-	  </div>
-<div class="recipe-row">
-      <div class="recipe-title">딸기요거트스무디</div>
-      <div class="recipe-text">얼음18개 + 요거트파우더1 + 딸기스무디1펌프 + 우유100g + 블렌더6 + 딸기청100g + 요거트스무디(블렌더 간음료) + 건조딸기 바스푼1</div>
-	  </div>
+  /* 💡 핵심: 기본적으로 상세 설명 박스를 숨깁니다 */
+  .bread-info {
+    display: none; 
+    padding: 12px;
+    margin-top: 4px;
+    background-color: #fff9db; /* 보기 편한 부드러운 노란색 배경 */
+    border: 1px solid #ffe066;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  /* active 클래스가 붙으면 화면에 보이게 만듭니다 */
+  .bread-info.active {
+    display: block;
+  }
+</style>
+
+<script>
+  // 💡 핵심: 클릭 시 상세 설명 박스를 켜고 끄는 함수
+  function openBreadInfo(button) {
+    // 클릭한 버튼의 다음 요소(즉, .bread-info)를 찾습니다.
+    const infoBox = button.nextElementSibling;
+    
+    // 이미 열려있는 다른 메뉴들을 다 닫고 싶다면 아래 3줄 주석을 해제하세요.
+    /*
+    document.querySelectorAll('.bread-info').forEach(box => {
+      if (box !== infoBox) box.classList.remove('active');
+    });
+    */
+
+    // 클릭된 항목의 표시 여부를 토글(열기/닫기)합니다.
+    infoBox.classList.toggle('active');
+  }
+
+  // 상위 메뉴(openMenu) 함수 예시 (기존 코드가 없을 경우 참고용)
+  function openMenu(menuId) {
+    const menu = document.getElementById(menuId);
+    if (menu) {
+      menu.style.display = (menu.style.display === 'none' || !menu.style.display) ? 'block' : 'none';
+    }
+  }
+</script>
+
+  <!-- 3. 결제방식 섹션 -->
+<div class="section">
+  <!-- 메인 결제방식 토글 버튼 -->
+  <button class="topBtn" onclick="openMenu('pay')">💳 결제방식</button>
+
+  <!-- 결제 수단 목록 -->
+  <div id="pay" class="menu">
+    <button class="item" onclick="showPayDetail('cash')">현금</button>
+    <button class="item" onclick="showPayDetail('card')">카드</button>
+    <button class="item" onclick="showPayDetail('prepaid')">선결제</button>
+    <button class="item" onclick="showPayDetail('credit')">신용</button>
+    <button class="item" onclick="showPayDetail('coupon')">쿠폰</button>
+    <button class="item" onclick="showPayDetail('transfer')">계좌이체</button>
+
+    <!-- 💡 각 결제 수단별 세부 내용 박스 -->
+    <div id="pay-details" class="pay-details-container">
+      <div id="detail-cash" class="pay-content">
+        <h4>💵 현금 결제</h4>
+        <p>음료선택 > 현금받기 > 받은금액선택 > 금액설정선택</p>
+        <label><input type="checkbox"> 현금영수증 발행</label>
+      </div>
+
+      <div id="detail-card" class="pay-content">
+        <h4>💳 카드 결제</h4>
+        <p>음료선택 > 카드 > 승인요청 > 카드 단말기꽂기</p>
+      </div>
+
+      <div id="detail-prepaid" class="pay-content">
+        <h4>🎁 선결제</h4>
+        <p>OO과 장부에 > 날짜적고 > 주문할음료적고</p>
+        <p>POS기에서 음료다중 > 전체선택 > 할인 100%적용</p>
+		<p>> 현금누름 > 현금결제 > 다시 장부에 전체금액적기</p>
+		<p>> 전체 선결제금액에서 잔액적기 (-오늘금액)</p>
+		<p>> 단톡방에 올리기</p>  
+      </div>
+
+      <div id="detail-credit" class="pay-content">
+        <h4>📋 신용 (큰금액) 결제</h4>
+        <p>예를들어 30만원이면 리더기에서 신용 누르고</p>
+		<p>> 결제금액입력 > 입력 누른후 받은카드 결제함</p>
+		<p>> (할부도 나오는데 대부분안함) 입력누름</p>
+		<p>> 영수증나오면 카드+영수증 고객님께드림</p>
+		<p>> 사인후 우리도 재인쇄누른후 1번직전 거래인쇄</p>  
+      </div>
+
+      <div id="detail-coupon" class="pay-content">
+        <h4>🎟️ 쿠폰 적용</h4>
+        <p>ETC메뉴에서 도장쿠폰음료선택후 현금결제함</p>
+      </div>
+
+      <div id="detail-transfer" class="pay-content">
+        <h4>🏦 계좌이체</h4>
+        <p>현금결제로 한후 영수증나오면</p>
+        <p>이름적고 계좌이체라고 단톡방에올리기</p>
+      </div>
+		
+		<div id="detail-credit" class="pay-content">
+        <h4>📋 키오스크 마감관리</h4>
+        <p>홈버튼누름 > 영업관리 > 비번99999누름</p>
+		<p>>영업마감누름 > 예 > 프로그램종료 > 예 윈도우창끄기</p>	
+      </div>
+		
+		<div id="detail-credit" class="pay-content">
+        <h4>📋 키오스크 품절관리</h4>
+        <p>홈버튼누름 > 매장옵션 > 품절관리 > 선택</p>
+		<p>>저장확인 > 영업관리 > 영수증관리 > 선택 > 반품</p>
+		<p>>고객님카드 다시넣고 영수증나오면됨 주문다시안내</p>	
+      </div>
+		
+		<div id="detail-credit" class="pay-content">
+        <h4>📋 키오스크 환불관리</h4>
+        <p>홈버튼누름 > 비번99999누름 > 영수증관리</p>
+		<p>> 주문내역선택(시간확인) > 환불버튼</p>
+		<p>> 결제하신 카드꼽고 영수증+카드 드림</p>	
+      </div>
+		
+    </div>
+  </div>
+</div>
+
+<style>
+  /* 스타일 예시 (필요시 기존 CSS에 맞춰 수정하세요) */
+  .pay-details-container {
+    margin-top: 12px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+  }
+
+  .pay-content {
+    display: none; /* 기본적으로 숨김 */
+  }
+
+  .pay-content.active {
+    display: block; /* 선택된 항목만 표시 */
+  }
+
+  .pay-content h4 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    color: #333;
+  }
+
+  .pay-content p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: #666;
+  }
+</style>
+
+<script>
+  // 결제 수단 세부 내용 표시 함수
+  function showPayDetail(payType) {
+    // 1. 모든 세부 내용 박스 숨기기
+    const contents = document.querySelectorAll('.pay-content');
+    contents.forEach(content => {
+      content.classList.remove('active');
+    });
+
+    // 2. 클릭한 항목에 해당하는 내용만 표시하기
+    const targetContent = document.getElementById('detail-' + payType);
+    if (targetContent) {
+      targetContent.classList.add('active');
+    }
+  }
+</script>
+
 </div>
 
 <script>
-/* ✅ 아코디언 */
-const acc = document.querySelectorAll(".accordion");
-
-document.addEventListener("click", function(e){
-  if(e.target.closest(".accordion")){
-    const btn = e.target.closest(".accordion");
-
-    acc.forEach(other => {
-      if (other !== btn) {
-        other.classList.remove("active");
-        other.nextElementSibling.style.maxHeight = null;
-        other.querySelector(".icon").textContent = "+";
-      }
-    });
-
-    const panel = btn.nextElementSibling;
-    const icon = btn.querySelector(".icon");
-
-    btn.classList.toggle("active");
-
-    if (panel.style.maxHeight) {
-      panel.style.maxHeight = null;
-      icon.textContent = "+";
+// 상단 주요 메뉴 열기/닫기
+function openMenu(id) {
+  document.querySelectorAll(".menu").forEach(menu => {
+    if (menu.id === id) {
+      menu.classList.toggle("active");
     } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-      icon.textContent = "-";
+      menu.classList.remove("active");
     }
+  });
+}
+
+// 음료 선택 시 HOT/ICE 영역 열기/닫기
+function openDrink(btn) {
+  const hoticeBox = btn.nextElementSibling;
+  
+  document.querySelectorAll(".hotice").forEach(box => {
+    if (box === hoticeBox) {
+      const isOpening = box.style.display !== "block";
+      box.style.display = isOpening ? "block" : "none";
+      
+      if (!isOpening) {
+        box.querySelectorAll('.recipe-box').forEach(b => b.classList.remove('active'));
+      }
+    } else {
+      box.style.display = "none";
+      box.querySelectorAll('.recipe-box').forEach(b => b.classList.remove('active'));
+    }
+  });
+}
+
+// HOT / ICE 클릭 시 세부 레시피 표시
+function toggleRecipe(btn, type) {
+  const container = btn.closest('.hotice');
+  const targetBox = container.querySelector(`.recipe-${type}`);
+  const allBoxes = container.querySelectorAll('.recipe-box');
+
+  if (targetBox.classList.contains('active')) {
+    targetBox.classList.remove('active');
+  } else {
+    allBoxes.forEach(box => box.classList.remove('active'));
+    targetBox.classList.add('active');
   }
-});
-</script>
-
-<script>
-/* ✅ manifest를 JS로 생성 (파일 없이) */
-const manifest = {
-  name: "카페 메뉴",
-  short_name: "카페메뉴",
-  start_url: ".",
-  display: "standalone",
-  background_color: "#f7f3f0",
-  theme_color: "#6b4f4f",
-  icons: []
-};
-
-const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-const manifestURL = URL.createObjectURL(blob);
-document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
-</script>
-
-<script>
-/* ✅ 서비스워커도 JS로 생성 */
-if ('serviceWorker' in navigator) {
-
-  const swCode = `
-    const CACHE_NAME = 'cafe-app-v1';
-    self.addEventListener('install', e => {
-      e.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
-      );
-    });
-
-    self.addEventListener('fetch', e => {
-      e.respondWith(
-        caches.match(e.request).then(res => res || fetch(e.request))
-      );
-    });
-  `;
-
-  const swBlob = new Blob([swCode], { type: 'text/javascript' });
-  const swURL = URL.createObjectURL(swBlob);
-
-  navigator.serviceWorker.register(swURL);
 }
 </script>
 
