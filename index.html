@@ -1148,9 +1148,8 @@
     <button class="item" onclick="showPayDetail('card')">카드</button>
     <button class="item" onclick="showPayDetail('prepaid')">선결제</button>
     <button class="item" onclick="showPayDetail('credit')">신용</button>
-    <button class="item" onclick="showPayDetail('coupon')">쿠폰</button>
+    <button class="item" onclick="showPayDetail('coupon')">쿠폰/3,500원쿠폰</button>
     <button class="item" onclick="showPayDetail('transfer')">계좌이체</button>
-
     <!-- 💡 각 결제 수단별 세부 내용 박스 -->
     <div id="pay-details" class="pay-details-container">
       <div id="detail-cash" class="pay-content">
@@ -1185,6 +1184,19 @@
       <div id="detail-coupon" class="pay-content">
         <h4>🎟️ 쿠폰 적용</h4>
         <p>ETC메뉴에서 도장쿠폰음료선택후 현금결제함</p>
+		
+        <h4>🎟️ 총무과 3,500원 쿠폰</h4>
+		<p>(7/29(수)~8/14(금))</p>
+		<p>1.음료주문 > 2. 총무과 쿠폰받아서 쿠폰함에 넣기</p>
+		<p>3.포스기에 총무과 쿠폰 (사용갯수대로 입력)누르고</p>	
+		<p>4.전체선택 > 할인 > 쿠폰갯수만큼 금액할인</p>
+		<p>5. 추가금액있을경우 현금이나 카드 결제 받기</p>
+        <p>예)아아 2,500원 1잔구매시 끝 잔액환불 안됨</p>
+		<p>예)아아 2,500원 2잔구매시 5,000원중</p>
+		<p>3,500원은 금액할인 후 1,500원 현금이나 카드결제</p>
+		<p>쿠폰으로 주문받을경우 키오스크주문불가</p>
+		<p>포스기로 주문받고, 메뉴에 총무과쿠폰도 쿠폰수만큼누르기</p>
+		<p>받은 쿠폰 버리지말고 쿠폰함에 잘 모아두기!</p>	
       </div>
 
       <div id="detail-transfer" class="pay-content">
@@ -1212,6 +1224,7 @@
 		<p>> 주문내역선택(시간확인) > 환불버튼</p>
 		<p>> 결제하신 카드꼽고 영수증+카드 드림</p>	
       </div>
+		
 		
     </div>
   </div>
